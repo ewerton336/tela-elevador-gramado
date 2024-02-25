@@ -24,7 +24,7 @@ const DateTime = () => {
 
   return (
     <div>
-      <p>Data e Hora: {brasilTime}</p>
+      Data e Hora: {brasilTime}
     </div>
   );
 };

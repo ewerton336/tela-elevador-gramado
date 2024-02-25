@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -30,26 +32,50 @@ const NewsCarousel = () => {
   }, []);
 
   return (
-    <Swiper
-      modules={[Autoplay, Pagination]}
-      spaceBetween={30}
-      slidesPerView={1}
-      autoplay={{
-        delay: 10000,
-        disableOnInteraction: false,
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        wordSpacing: 3
       }}
-      pagination={{
-        clickable: true,
-      }}
-      loop={true}
     >
-      {newsItems.map((newsItem, index) => (
-        <SwiperSlide key={index}>
-          <h2>{newsItem.title}</h2>
-          <p>{newsItem.description}</p>
-        </SwiperSlide>
-      ))}
-    </Swiper>
+      <Swiper
+        modules={[Autoplay, Pagination]}
+        spaceBetween={30}
+        slidesPerView={1}
+        autoplay={{
+          delay: 10000,
+          disableOnInteraction: false,
+        }}
+        pagination={{
+          clickable: true,
+        }}
+        loop={true}
+      >
+        <br></br>
+        {newsItems.map((newsItem, index) => (
+          <SwiperSlide key={index}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+              }}
+            >
+              <Typography variant="h5" gutterBottom>
+                {newsItem.title}
+              </Typography>
+              <Typography>{newsItem.description}</Typography>
+            </Box>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </Box>
   );
 };
 
