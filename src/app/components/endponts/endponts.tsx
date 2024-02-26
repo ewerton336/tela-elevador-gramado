@@ -1,12 +1,13 @@
 // AvisosController.tsx
+import config from '../../../../config.js';
 
 export const AvisosController = {
   listar: async () => {
-    const response = await fetch('http://localhost:5193/Avisos');
+    const response = await fetch(`${config.apiLocalUrl}/Avisos/`);
     return await response.json();
   },
   buscarUltimo: async () => {
-    const response = await fetch('http://localhost:5193/Avisos/ultimo');
+    const response = await fetch(`${config.apiLocalUrl}/Avisos/ultimo`);
     return await response.json();
   },
  
