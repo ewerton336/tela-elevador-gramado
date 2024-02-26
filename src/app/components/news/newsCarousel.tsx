@@ -19,9 +19,7 @@ const NewsCarousel = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get(
-          "https://newsapi.org/v2/top-headlines?country=br&apiKey=a4b4b67d75db430483b9abd07210adb9"
-        );
+        const response = await axios.get("/api/news");
         setNewsItems(response.data.articles);
       } catch (error) {
         console.error("Erro ao obter notícias:", error);

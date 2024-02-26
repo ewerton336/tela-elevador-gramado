@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { AvisosController } from "../endponts/endponts";
+import axios from 'axios';
+
 
 const Avisos = () => {
   const [ultimoAviso, setUltimoAviso] = useState<string>("");
+  
 
   useEffect(() => {
     const fetchUltimoAviso = async () => {
