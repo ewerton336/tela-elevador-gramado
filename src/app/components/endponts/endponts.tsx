@@ -1,17 +1,23 @@
-// AvisosController.tsx
-import config from '../../../../config.js';
 
-export const AvisosController = {
+const API_BASE_URL = '/api/avisos';
+
+export const Endpoints = {
   listar: async () => {
-    const response = await fetch(`${config.apiLocalUrl}/Avisos/`);
+    const response = await fetch(`${API_BASE_URL}/Avisos`);
     return await response.json();
   },
   buscarUltimo: async () => {
-    const response = await fetch(`${config.apiLocalUrl}/Avisos/ultimo`);
+    const response = await fetch(`${API_BASE_URL}/Avisos/ultimo`);
     return await response.json();
   },
- 
-  };
-
-// Exemplo de uso
-//AvisosController.listar().then((avisos) => console.log(avisos));
+  async salvarAviso(conteudo: string) {
+    const response = await fetch(`${API_BASE_URL}/Avisos/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ conteudo }),
+    });
+    return await response.json();
+  }
+};

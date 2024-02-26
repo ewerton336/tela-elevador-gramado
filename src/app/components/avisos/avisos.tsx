@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AvisosController } from "../endponts/endponts";
-import axios from 'axios';
+import { Endpoints } from "../endponts/endponts";
 
 
 const Avisos = () => {
@@ -10,7 +9,7 @@ const Avisos = () => {
   useEffect(() => {
     const fetchUltimoAviso = async () => {
       try {
-        const response = await AvisosController.buscarUltimo().then((response) => response);
+        const response = await Endpoints.buscarUltimo().then((response) => response);
         setUltimoAviso(response.conteudo || "");
       } catch (error) {
         console.error("Erro ao buscar último aviso:", error);

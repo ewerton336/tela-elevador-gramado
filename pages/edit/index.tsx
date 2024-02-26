@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css"; // Importa o CSS do Quill
-import axios from 'axios';
+import { Endpoints } from "../../src/app/components/endponts/endponts";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -13,14 +13,13 @@ const EditablePage: React.FC<EditablePageProps> = ({ onSave }) => {
   const [content, setContent] = useState("");
   const quillRef = useRef<any>();
 
-  const handleSave = () => {
-    axios.post('http://localhost:5193/Avisos', { conteudo: content })
-      .then(response => {
-        alert('Aviso salvo com sucesso:');
-      })
-      .catch(error => {
-        console.error('Erro ao salvar o aviso:', error);
-      });
+  const handleSave = async () => {
+    try {
+      const response = await Endpoints.salvarAviso(content);
+      alert('Aviso salvo com sucesso:');
+    } catch (error) {
+      console.error('Erro ao salvar o aviso:', error);
+    }
   };
 
   const modules = {

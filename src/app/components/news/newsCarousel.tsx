@@ -3,6 +3,7 @@ import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import config from "../../../../config";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -19,7 +20,7 @@ const NewsCarousel = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get("/api/news");
+        const response = await axios.get(`${config.apiNews}`);
         setNewsItems(response.data.articles);
       } catch (error) {
         console.error("Erro ao obter notícias:", error);
