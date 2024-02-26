@@ -67,7 +67,7 @@ const NewsCarousel = () => {
                 height: "100%",
               }}
             >
-              <Typography variant="h5" gutterBottom>
+              <Typography variant="h4" textAlign="center" gutterBottom >
                 {newsItem.title}
               </Typography>
               <Typography>{newsItem.description}</Typography>
