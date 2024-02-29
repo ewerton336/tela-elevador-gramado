@@ -1,33 +1,50 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import cheerio from "cheerio";
+import { Box, Button, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import config from "../../../../config";
-
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 
-interface NewsData {
-  title?: string;
-  description?: string;
+interface Article {
+  title: string;
+  link: string;
+  description: string;
+  // Se você adicionar scraping de imagem, descomente a linha abaixo
+  image?: string;
 }
 
-const NewsCarousel = () => {
-  const [newsItems, setNewsItems] = useState<NewsData[]>([]);
+const G1Carousel = () => {
+  const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const fetchArticles = async () => {
       try {
-        const response = await axios.get(`${config.apiNews}`);
-        setNewsItems(response.data.articles);
+        const response = await axios.get("/api/g1");
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const scrapedArticles: Article[] = [];
+
+        $(".feed-post-body").each((index, element) => {
+          const title =
+            $(element).find(".feed-post-link").text().trim() || "Sem título";
+          const link = $(element).find(".feed-post-link").attr("href") || "#";
+          const description =
+            $(element).find(".feed-post-body-resumo").text().trim() || "";
+          const image =
+            $(element).find(".bstn-fd-picture-image").attr("src") || undefined; // Extrai o URL da imagem
+
+          scrapedArticles.push({ title, link, description, image });
+        });
+
+        setArticles(scrapedArticles);
       } catch (error) {
-        console.error("Erro ao obter notícias:", error);
+        console.error("Error fetching articles:", error);
       }
     };
 
-    fetchNews();
+    fetchArticles();
   }, []);
 
   return (
@@ -38,7 +55,6 @@ const NewsCarousel = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        wordSpacing: 3
       }}
     >
       <Swiper
@@ -54,28 +70,45 @@ const NewsCarousel = () => {
         }}
         loop={true}
       >
-        <br></br>
-        {newsItems.map((newsItem, index) => (
-          <SwiperSlide key={index}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-              }}
-            >
-              <Typography variant="h4" textAlign="center" gutterBottom >
-                {newsItem.title}
-              </Typography>
-              <Typography>{newsItem.description}</Typography>
-            </Box>
-          </SwiperSlide>
-        ))}
+        {articles
+          .filter((article) => article.title.length > 0)
+          .map((article, index) => (
+            <SwiperSlide key={index}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <Typography variant="h3" textAlign="center" gutterBottom>
+                  {article.title}
+                </Typography>
+
+                {article.image && (
+                  <Box
+                    component="img"
+                    sx={{
+                      maxWidth: "100%",
+                      maxHeight: 300,
+                      marginBottom: 2,
+                    }}
+                    src={article.image}
+                    alt={article.title}
+                  />
+                )}
+                <Typography variant="h4" textAlign="center">
+                  {article.description}
+                </Typography>
+              </Box>
+              <br /> <br /> <br />
+            </SwiperSlide>
+          ))}
       </Swiper>
     </Box>
   );
 };
 
-export default NewsCarousel;
+export default G1Carousel;
