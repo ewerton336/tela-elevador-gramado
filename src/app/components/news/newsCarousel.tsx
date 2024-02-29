@@ -83,7 +83,7 @@ const G1Carousel = () => {
                   height: "100%",
                 }}
               >
-                <Typography variant="h3" textAlign="center" gutterBottom>
+                <Typography variant="h5" textAlign="center" gutterBottom>
                   {article.title}
                 </Typography>
 
@@ -99,8 +99,11 @@ const G1Carousel = () => {
                     alt={article.title}
                   />
                 )}
-                <Typography variant="h4" textAlign="center">
+                <Typography variant="h5" textAlign="center">
                   {article.description}
+                </Typography>
+                <Typography variant="h6" textAlign="center">
+                  Fonte: G1
                 </Typography>
               </Box>
               <br /> <br /> <br />
