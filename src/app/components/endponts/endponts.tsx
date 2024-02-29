@@ -1,5 +1,6 @@
+import config from "../../../../config";
 
-const API_BASE_URL = '/api/avisos';
+const API_BASE_URL = config.apiLocalUrl;
 
 export const Endpoints = {
   listar: async () => {
@@ -12,12 +13,12 @@ export const Endpoints = {
   },
   async salvarAviso(conteudo: string) {
     const response = await fetch(`${API_BASE_URL}/Avisos/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ conteudo }),
     });
     return await response.json();
-  }
+  },
 };
