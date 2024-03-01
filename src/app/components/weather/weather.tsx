@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import DateTime from "../datetime/dateTime";
+import config from "../../../../config";
 
 interface CurrentWeatherData {
   temp: number;
@@ -33,31 +34,37 @@ interface WeatherData {
 const Weather = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const response = await fetch("/api/weather?woeid=455987");
-        if (!response.ok) {
-          throw new Error(`Erro ao obter dados da previsão do tempo: ${response.status}`);
-        }
-        const data = await response.json();
-        setWeather({
-          current: data.results,
-          forecast: data.results.forecast,
-        });
-      } catch (error) {
-        console.error("Erro ao obter dados da previsão do tempo:", error);
+  const fetchWeather = async () => {
+    try {
+      const response = await fetch("/api/weather?woeid=455987");
+      if (!response.ok) {
+        throw new Error(`Erro ao obter dados da previsão do tempo: ${response.status}`);
       }
-    };
-  
+      const data = await response.json();
+      setWeather({
+        current: data.results,
+        forecast: data.results.forecast,
+      });
+    } catch (error) {
+      console.error("Erro ao obter dados da previsão do tempo:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchWeather();
+
+    const intervalId = setInterval(() => {
+      fetchWeather();
+    }, config.FetchIntervalEndpontsExternos * 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
-  
 
   if (!weather) {
     return <div>Carregando previsão do tempo...</div>;
   }
 
+  
   return (
     <Box sx={{ flexGrow: 1, padding: 2 }}>
       <Grid container justifyContent="center" spacing={2}>
@@ -100,7 +107,7 @@ const Weather = () => {
                 <Grid container direction="column" justifyContent="space-between" sx={{ height: '100%' }}>
                   <Grid item>
                     <Typography variant="h5" gutterBottom>
-                      {index === 0 ? 'Previsão para Hoje:' : 'Previsão para Amanhã:'}
+                      {index === 0 ? 'Previsão de Hoje:' : 'Previsão de Amanhã:'}
                     </Typography>
                     <Typography variant="h5">Máx.: {forecast.max}°C</Typography>
                     <Typography variant="h5">Mín.: {forecast.min}°C</Typography>
