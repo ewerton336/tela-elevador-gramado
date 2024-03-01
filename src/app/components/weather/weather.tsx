@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import DateTime from "../datetime/dateTime";
-import { Divider } from "@mui/material";
 
 interface CurrentWeatherData {
   temp: number;
@@ -37,18 +36,23 @@ const Weather = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const response = await axios.get("/api/weather?woeid=455987");
+        const response = await fetch("/api/weather?woeid=455987");
+        if (!response.ok) {
+          throw new Error(`Erro ao obter dados da previsão do tempo: ${response.status}`);
+        }
+        const data = await response.json();
         setWeather({
-          current: response.data.results,
-          forecast: response.data.results.forecast,
+          current: data.results,
+          forecast: data.results.forecast,
         });
       } catch (error) {
         console.error("Erro ao obter dados da previsão do tempo:", error);
       }
     };
-
+  
     fetchWeather();
   }, []);
+  
 
   if (!weather) {
     return <div>Carregando previsão do tempo...</div>;
@@ -58,101 +62,64 @@ const Weather = () => {
     <Box sx={{ flexGrow: 1, padding: 2 }}>
       <Grid container justifyContent="center" spacing={2}>
         <Grid item xs={12} sm={6} md={4}>
-          <Card sx={{ height: "100%" }}>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
-              <Typography variant="h5" gutterBottom>
-                {weather.current.city}
-              </Typography>
-              <Typography variant="h5">
-                Temperatura Atual: {weather.current.temp}°C
-              </Typography>
-              <Typography variant="h5">
-                Condição: {weather.current.description}
-              </Typography>
-              <Typography variant="h5">
-                <DateTime />
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 2,
-                }}
-              >
-                <img
-                  src={`/weather/icons/${weather.current.condition_slug}.svg`}
-                  alt={weather.current.description}
-                  style={{ maxWidth: "50%", height: "auto" }}
-                />
-              </Box>
+              <Grid container direction="column" justifyContent="space-between" sx={{ height: '100%' }}>
+                <Grid item>
+                  <Typography variant="h5" gutterBottom>
+                    {weather.current.city}
+                  </Typography>
+                  <Typography variant="h5">
+                    Temp. Atual: {weather.current.temp}°C
+                  </Typography>
+                  <Typography variant="h5">
+                    {weather.current.description}
+                  </Typography>
+                  <Typography variant="h5">
+                  <DateTime/>
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', marginTop: 2 }}>
+                    <img
+                      src={`/weather/icons/${weather.current.condition_slug}.svg`}
+                      alt={weather.current.description}
+                      style={{ maxWidth: '70%',  height: 'auto' }}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card sx={{ height: "100%" }}>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                Previsão para Hoje:
-              </Typography>
-              <Typography variant="h5">
-                Máxima: {weather.forecast[0].max}°C
-              </Typography>
-              <Typography variant="h5">
-                Mínima: {weather.forecast[0].min}°C
-              </Typography>
-              <Typography variant="h5">
-                Condição: {weather.forecast[0].description}
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 2,
-                }}
-              >
-                <img
-                  src={`/weather/icons/${weather.forecast[0].condition}.svg`}
-                  alt={weather.forecast[0].description}
-                  style={{ maxWidth: "50%", height: "auto" }}
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card sx={{ height: "100%" }}>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                Previsão para Amanhã:
-              </Typography>
-              <Typography variant="h5">
-                Máxima: {weather.forecast[1].max}°C
-              </Typography>
-              <Typography variant="h5">
-                Mínima: {weather.forecast[1].min}°C
-              </Typography>
-              <Typography variant="h5">
-                Condição: {weather.forecast[1].description}
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 2,
-                }}
-              >
-                <img
-                  src={`/weather/icons/${weather.forecast[1].condition}.svg`}
-                  alt={weather.forecast[1].description}
-                  style={{ maxWidth: "50%", height: "auto" }}
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+
+        {weather.forecast.filter((forecast, index) => index <= 1).map((forecast, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Grid container direction="column" justifyContent="space-between" sx={{ height: '100%' }}>
+                  <Grid item>
+                    <Typography variant="h5" gutterBottom>
+                      {index === 0 ? 'Previsão para Hoje:' : 'Previsão para Amanhã:'}
+                    </Typography>
+                    <Typography variant="h5">Máx.: {forecast.max}°C</Typography>
+                    <Typography variant="h5">Mín.: {forecast.min}°C</Typography>
+                    <Typography variant="h5">{forecast.description}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', marginTop: 2 }}>
+                      <img
+                        src={`/weather/icons/${forecast.condition}.svg`}
+                        alt={forecast.description}
+                        style={{ maxWidth: '70%',  height: 'auto' }}
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );
