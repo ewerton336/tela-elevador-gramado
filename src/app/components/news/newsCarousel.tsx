@@ -105,6 +105,7 @@ const G1Carousel = () => {
                 position: "relative",
                 width: "100%",
                 height: "100%",
+                maxHeight: "500px",
               }}
             >
               {article.image && (
@@ -114,7 +115,7 @@ const G1Carousel = () => {
                     objectFit: "cover",
                     maxWidth: "100%",
                     width: "100%",
-                    height: "100%",
+                    height: "auto",
                     borderRadius: "9px",
                     margin: "auto",
                     display: "block",
