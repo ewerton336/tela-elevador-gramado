@@ -156,11 +156,6 @@ const G1Carousel = () => {
     </Swiper>
   </Box>
 </Box>
-
-
-
-
-
   );
 };
 

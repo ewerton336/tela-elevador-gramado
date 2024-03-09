@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -37,10 +36,14 @@ const Weather = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const response = await axios.get("/api/weather?woeid=455987");
+        const response = await fetch("/api/weather?woeid=455987");
+        if (!response.ok) {
+          throw new Error(`Erro ao obter dados da previsão do tempo: ${response.statusText}`);
+        }
+        const data = await response.json();
         setWeather({
-          current: response.data.results,
-          forecast: response.data.results.forecast,
+          current: data.results,
+          forecast: data.results.forecast,
         });
       } catch (error) {
         console.error("Erro ao obter dados da previsão do tempo:", error);
