@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import cheerio from "cheerio";
 import { Box, Typography } from "@mui/material";
@@ -7,6 +7,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import config from "../../../../config";
+import { useQuery } from '@tanstack/react-query';
 
 interface Article {
   title: string;
@@ -16,42 +17,37 @@ interface Article {
 }
 
 const G1Carousel = () => {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const fetchArticles = async (): Promise<Article[]> => {
+    const response = await axios.get("/api/g1");
+    const html = response.data;
+    const $ = cheerio.load(html);
+    const scrapedArticles: Article[] = [];
 
-  const fetchArticles = async () => {
-    try {
-      const response = await axios.get("/api/g1");
-      const html = response.data;
-      const $ = cheerio.load(html);
-      const scrapedArticles: Article[] = [];
+    $(".feed-post-body").each((index, element) => {
+      const title =
+        $(element).find(".feed-post-link").text().trim() || "Sem título";
+      const link = $(element).find(".feed-post-link").attr("href") || "#";
+      const description =
+        $(element).find(".feed-post-body-resumo").text().trim() || "";
+      const image =
+        $(element).find(".bstn-fd-picture-image").attr("src") || undefined;
 
-      $(".feed-post-body").each((index, element) => {
-        const title =
-          $(element).find(".feed-post-link").text().trim() || "Sem título";
-        const link = $(element).find(".feed-post-link").attr("href") || "#";
-        const description =
-          $(element).find(".feed-post-body-resumo").text().trim() || "";
-        const image =
-          $(element).find(".bstn-fd-picture-image").attr("src") || undefined;
+      scrapedArticles.push({ title, link, description, image });
+    });
 
-        scrapedArticles.push({ title, link, description, image });
-      });
-
-      setArticles(scrapedArticles);
-    } catch (error) {
-      console.error("Error fetching articles:", error);
-    }
+    return scrapedArticles;
   };
 
-  useEffect(() => {
-    fetchArticles();
+  const {isLoading, error, data: articles } = useQuery<Article[]>({
+    queryKey: ['g1'],
+    queryFn: () => fetchArticles(),
+    refetchInterval: config.FetchIntervalAvisos * 1000,
+  });
 
-    const intervalId = setInterval(() => {
-      fetchArticles();
-    }, config.FetchIntervalEndpontsExternos * 1000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+if (isLoading) return <div>Carregando Notícias...</div>;
+
+if (error) return <div>Ocorreu um erro ao carregar notícias: {error.message}</div>;
 
   return (
     <Box
@@ -92,7 +88,7 @@ const G1Carousel = () => {
           }}
           loop={true}
         >
-          {articles
+          {articles!
             .filter((article) => article.title.length > 0 && article.image)
             .map(({ title, image, description }, index) => (
               <SwiperSlide key={index}>

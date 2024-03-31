@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
 import { Endpoints } from "../endponts/endponts";
 import config from "../../../../config";
 
+
 const Avisos = () => {
-  const [ultimoAviso, setUltimoAviso] = useState<string>("");
+  const {isLoading, error, data: ultimoAviso } = useQuery({
+    queryKey: ['ultimoAviso'],
+    queryFn: () => Endpoints.buscarUltimo().then((response) => response.conteudo || ""),
+    refetchInterval: config.FetchIntervalAvisos * 1000,
+  });
 
-  const fetchUltimoAviso = async () => {
-    try {
-      const response = await Endpoints.buscarUltimo().then((response) => response);
-      setUltimoAviso(response.conteudo || "");
-    } catch (error) {
-      console.error("Erro ao buscar último aviso:", error);
-    }
-  };
+  if (isLoading) return <div>Carregando Avisos...</div>;
 
-  useEffect(() => {
-    fetchUltimoAviso();
-
-    const intervalId = setInterval(() => {
-      fetchUltimoAviso();
-    }, config.FetchIntervalAvisos * 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+  if (error) return <div>Ocorreu um erro ao carregar avisos: {error.message}</div>;
 
   return (
     <div style={{ textAlign: 'center' }}>

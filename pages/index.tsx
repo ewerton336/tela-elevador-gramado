@@ -1,15 +1,21 @@
-import Avisos from "@/app/components/avisos/avisos";
-import Footer from "@/app/components/footer/footer";
-import NewsCarousel from "@/app/components/news/newsCarousel";
-import Weather from "@/app/components/weather/weather";
+// Em pages/index.tsx
+import Avisos from '@/app/components/avisos/avisos';
+import NewsCarousel from '@/app/components/news/newsCarousel';
+import Weather from '@/app/components/weather/weather';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
-export default function Home() {
+const queryClient = new QueryClient();
+
+const Home = () => {
   return (
-    <div>
-      <Weather />
-      <NewsCarousel />
-      <Avisos/>
-      <Footer/> 
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div>
+        <Weather />
+        <NewsCarousel />
+        <Avisos />
+      </div>
+    </QueryClientProvider>
   );
-}
+};
+
+export default Home;
