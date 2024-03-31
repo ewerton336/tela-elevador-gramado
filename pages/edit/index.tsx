@@ -4,8 +4,11 @@ import "react-quill/dist/quill.snow.css"; // Importa o CSS do Quill
 import { Endpoints } from "../../src/app/components/endponts/endponts";
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
+import Footer from "@/app/components/footer/footer";
+import { useTheme } from "@/app/contexts/theme-context";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 
 interface EditablePageProps {
   onSave: (content: string) => void;
@@ -56,7 +59,7 @@ const EditablePage: React.FC<EditablePageProps> = ({ onSave }) => {
   ];
 
   return (
-    <div style={{ width: "800px", margin: "0 auto" }}> {/* Define o tamanho do editor */}
+    <div style={{ width: "800px", margin: "0 auto" }}>
       <ReactQuill
         theme="snow"
         value={content}
@@ -64,11 +67,12 @@ const EditablePage: React.FC<EditablePageProps> = ({ onSave }) => {
         modules={modules}
         formats={formats}
         placeholder="Digite seu texto aqui..."
-        style={{ height: "500px", marginBottom: "20px" }} // Ajuste a altura e a margem inferior conforme necessário
+        style={{ height: "500px", marginBottom: "20px" }} 
       />
       <Button variant="contained" color="primary" onClick={handleSave} style={{ marginBottom: "20px" }}>
         Salvar
       </Button>
+      <Footer/>
     </div>
   );
 };
