@@ -53,7 +53,7 @@ const Weather = () => {
   }
 
   if (error instanceof Error) {
-    return <div>Ocorreu um erro ao carregar notícias: {error.message}</div>;
+    return <div>Ocorreu um erro ao carregar previsão: {error.message}</div>;
   }
 
   if (weather){
