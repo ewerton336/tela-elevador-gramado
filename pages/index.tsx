@@ -25,7 +25,8 @@ const Home = () => {
   return (
     <div
       style={{
-        width: "800px",
+        width: "100%",
+        maxWidth: "1200px",
         margin: "0 auto",
         backgroundColor: isDarkMode ? "black" : "",
         color: isDarkMode ? "white" : "black",
