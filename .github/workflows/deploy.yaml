@@ -5,6 +5,10 @@ on:
     branches:
       - master  # Executar o workflow quando houver push na branch 'master'
 
+concurrency:
+  group: deploy
+  cancel-in-progress: true  # Cancela qualquer execução anterior em andamento
+
 jobs:
   build:
     runs-on: ubuntu-latest
