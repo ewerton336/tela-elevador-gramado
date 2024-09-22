@@ -17,7 +17,6 @@ spec:
       containers:
       - name: elevador-gramado-ix
         image: elevador-gramado-ix:latest  # Nome da imagem Docker
-        imagePullPolicy: Never              # Garante que a imagem local será usada
         ports:
         - containerPort: 3000  # Porta interna no container onde a aplicação irá rodar
 ---
