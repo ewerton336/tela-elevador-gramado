@@ -30,6 +30,6 @@ spec:
   ports:
     - port: 3000        # Porta externa para acessar a aplicação
       targetPort: 3000  # Porta interna no container
-      nodePort: 3000    # Porta do Node para acesso externo
+      nodePort: 30001    # Porta do Node para acesso externo
   selector:
     app: elevador-gramado-ix
