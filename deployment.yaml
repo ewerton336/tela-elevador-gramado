@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elevador-gramado-ix-deployment
+  labels:
+    app: elevador-gramado-ix
+spec:
+  replicas: 1  # Número de réplicas da aplicação
+  selector:
+    matchLabels:
+      app: elevador-gramado-ix
+  template:
+    metadata:
+      labels:
+        app: elevador-gramado-ix
+    spec:
+      containers:
+      - name: elevador-gramado-ix
+        image: elevador-gramado-ix:latest  # Nome da imagem Docker
+        ports:
+        - containerPort: 3001  # Porta onde a aplicação irá rodar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elevador-gramado-ix-service
+spec:
+  type: NodePort  # Use LoadBalancer se estiver em um ambiente com suporte a isso
+  ports:
+    - port: 3001       # Porta externa para acesso
+      targetPort: 3001  # Porta interna no container
+  selector:
+    app: elevador-gramado-ix
