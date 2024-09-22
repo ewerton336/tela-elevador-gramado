@@ -5,7 +5,7 @@ metadata:
   labels:
     app: elevador-gramado-ix
 spec:
-  replicas: 1  # Número de réplicas da aplicação
+  replicas: 1
   selector:
     matchLabels:
       app: elevador-gramado-ix
@@ -17,17 +17,19 @@ spec:
       containers:
       - name: elevador-gramado-ix
         image: elevador-gramado-ix:latest  # Nome da imagem Docker
+        imagePullPolicy: Never              # Garante que a imagem local será usada
         ports:
-        - containerPort: 3001  # Porta onde a aplicação irá rodar
+        - containerPort: 3000  # Porta interna no container onde a aplicação irá rodar
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: elevador-gramado-ix-service
 spec:
-  type: NodePort  # Use LoadBalancer se estiver em um ambiente com suporte a isso
+  type: NodePort  # Expor a aplicação externamente
   ports:
-    - port: 3001       # Porta externa para acesso
-      targetPort: 3001  # Porta interna no container
+    - port: 3000        # Porta externa para acessar a aplicação
+      targetPort: 3000  # Porta interna no container
+      nodePort: 3000    # Porta do Node para acesso externo
   selector:
     app: elevador-gramado-ix
