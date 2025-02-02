@@ -17,17 +17,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Definir diretório do projeto
-            cd /home/usuario/projetos/tela-elevador-gramado
-
-            # Atualizar código do repositório
+            cd ~/tela-elevador-gramado
             git pull origin master
-
-            # Construir a imagem Docker no próprio servidor
             docker build -t tela-elevador-gramado:latest .
-
-            # Remover pods antigos do Kubernetes para atualizar a versão
             kubectl delete deployment tela-elevador-gramado --ignore-not-found
-
-            # Aplicar o deployment no Kubernetes
-            kubectl apply -f /home/usuario/k8s/tela-elevador-gramado-deployment.yaml
+            kubectl apply -f ~/k8s/tela-elevador-gramado-deployment.yaml
