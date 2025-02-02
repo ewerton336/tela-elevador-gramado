@@ -34,7 +34,7 @@ const Home = () => {
     >
       <ThemeProvider theme={currentTheme}>
         <div>
-          <h1> Teste 2 hue</h1>
+          <h1> Teste 2 hu</h1>
           <Weather />
           <NewsCarousel />
           <Avisos />
