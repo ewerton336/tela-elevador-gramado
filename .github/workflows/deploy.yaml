@@ -1,37 +1,33 @@
-name: Build and Deploy to Kubernetes
+name: Deploy to Kubernetes (Servidor)
 
 on:
   push:
     branches:
-      - master  # Executar o workflow quando houver push na branch 'master'
-
-concurrency:
-  group: deploy
-  cancel-in-progress: true  # Cancela qualquer execução anterior em andamento
+      - master
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Conectar ao Servidor e Fazer Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Definir diretório do projeto
+            cd /home/usuario/projetos/tela-elevador-gramado
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+            # Atualizar código do repositório
+            git pull origin master
 
-    - name: Copy code to server
-      run: |
-        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-        rsync -avz --exclude '.git' ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/root/elevador-gramado-ix
+            # Construir a imagem Docker no próprio servidor
+            docker build -t tela-elevador-gramado:latest .
 
-    - name: Build and deploy on server
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        cd /home/root/elevador-gramado-ix
-        docker build -t elevador-gramado-ix:latest .
-        kubectl apply -f /home/root/elevador-gramado-ix/deployment.yaml  # Aplica o arquivo de deployment
-        kubectl set image deployment/elevador-gramado-ix-deployment elevador-gramado-ix=elevador-gramado-ix:latest  # Atualiza a imagem
-        EOF
+            # Remover pods antigos do Kubernetes para atualizar a versão
+            kubectl delete deployment tela-elevador-gramado --ignore-not-found
+
+            # Aplicar o deployment no Kubernetes
+            kubectl apply -f /home/usuario/k8s/tela-elevador-gramado-deployment.yaml
